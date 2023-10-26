@@ -15,19 +15,16 @@ public class Main {
         System.out.println("Введите арифметическое выражение в поле ниже:");
 
         String result = in.nextLine();
-        
+
         System.out.println(calc(result));
     }
 
     public static String calc(String input) {
 
         Converter converter = new Converter();
-        Numeric numeric = new Numeric();
         String[] oper = {"+", "-", "*", "/"};
-        String[] regexOper = {"\\+", "-", "\\*", "/"};
-        String error = "Ошибка";
         int operIndex = -1;
-        
+
         for (int i = 0; i < oper.length; i++) {
             if (input.contains(oper[i])) {
                 operIndex = i;
@@ -35,38 +32,38 @@ public class Main {
             }
         }
         if (operIndex == -1) {
-            System.out.println("Некорректный знак выражения");
-            return error;
+            throw new RuntimeException("Некорректный знак выражения");
         }
-        String[] value = input.split(regexOper[operIndex]);
+        String[] parts = input.split(" ");
 
-        if(!((numeric.isNumeric(value[0]) || converter.isRoman(value[0])) || (numeric.isNumeric(value[1]) || converter.isRoman(value[1])))) {
-            System.out.println("Вы ввели недопустимые символы. Возможно: 1-10, I-X");
-            return error;
+        if (parts.length == 1) {
+            throw new RuntimeException("Некорректный формат арифметической операции");
         }
 
-        if (converter.isRoman(value[0]) != converter.isRoman(value[1])) {
-            System.out.println("Вводимые числа должны быть в одном формате");
-            return error;
+        if (parts.length > 3) {
+            throw new RuntimeException("Некорректный формат арифметической операции");
+        }
+
+        if (converter.isRoman(parts[0]) != converter.isRoman(parts[2])) {
+            throw new RuntimeException("Вводимые числа должны быть в одном формате");
         }
         int a, b;
-        boolean isRoman = converter.isRoman(value[0]);
+        boolean isRoman = converter.isRoman(parts[0]);
 
         if (isRoman) {
-            a = converter.romanToInt(value[0]);
-            b = converter.romanToInt(value[1]);
+            a = converter.romanToInt(parts[0]);
+            b = converter.romanToInt(parts[2]);
         } else {
-            a = Integer.parseInt(value[0]);
-            b = Integer.parseInt(value[1]);
+            a = Integer.parseInt(parts[0]);
+            b = Integer.parseInt(parts[2]);
         }
-        
+
         if ((a < 1 || a > 10) || (b < 1 || b > 10)) {
-            System.out.println("Числа не могут быть меньше 1 и больше 10");
-            return error;
+            throw new RuntimeException("Числа не могут быть меньше 1 и больше 10");
         }
         int result = 0;
         String sResult = "";
-        
+
         switch (oper[operIndex]) {
             case "+":
                 result = a + b;
@@ -83,8 +80,7 @@ public class Main {
         }
         if (isRoman) {
             if (result <= 0) {
-                System.out.println("Вы ввели выражение, равное нулю/меньше нуля. В римском калькуляторе нет данных значений");
-                return error;
+                throw new RuntimeException("Вы ввели выражение, равное нулю/меньше нуля. В римском калькуляторе нет данных значений");
             }
             sResult = converter.intToRoman(result);
             return sResult;
@@ -95,7 +91,7 @@ public class Main {
 }
 
 class Converter {
-    
+
     TreeMap<Character, Integer> romanKeyMap = new TreeMap<>();
     TreeMap<Integer, String> arabianKeyMap = new TreeMap<>();
 
@@ -127,13 +123,13 @@ class Converter {
 
         String roman = "";
         int arabianKey;
-        
+
         do {
             arabianKey = arabianKeyMap.floorKey(value);
             roman += arabianKeyMap.get(arabianKey);
             value -= arabianKey;
         } while (value != 0);
-        
+
         return roman;
     }
 
@@ -154,24 +150,5 @@ class Converter {
             }
         }
         return result;
-    }
-}
-
-class Numeric {
-
-    boolean isNumeric(String string) {
-
-        int intValue;
-
-        if(string == null || string.equals("")) {
-            return false;
-        }
-
-        try {
-            intValue = Integer.parseInt(string);
-            return true;
-        } catch (NumberFormatException e) {}
-        
-        return false;
     }
 }
