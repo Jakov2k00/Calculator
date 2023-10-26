@@ -1,4 +1,6 @@
 
+// Author: Jakov2k00 for Kata.Academy
+
 import java.util.Scanner;
 import java.util.TreeMap;
 
