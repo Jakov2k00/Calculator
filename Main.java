@@ -10,7 +10,7 @@ public class Main {
 
         Scanner in = new Scanner(System.in);
 
-        System.out.println("Это - калькулятор. Он умеет вычислять самые простые выражения.");
+        System.out.println("Это - калькулятор. Он умеет вычислять самые простые выражения");
         System.out.println("Вы можете использовать либо арабские, либо римские цифры и символы: '+', '-', '*', '/'");
         System.out.println("Введите арифметическое выражение в поле ниже:");
 
@@ -33,13 +33,13 @@ public class Main {
             }
         }
         if (operIndex == -1) {
-            System.out.println("Некорректное выражение");
+            System.out.println("Некорректный знак выражения");
             return error;
         }
         String[] value = input.split(regexOper[operIndex]);
 
         if(!((numeric.isNumeric(value[0]) || converter.isRoman(value[0])) || (numeric.isNumeric(value[1]) || converter.isRoman(value[1])))) {
-            System.out.println("Вы ввели недопустимые символы");
+            System.out.println("Вы ввели недопустимые символы. Возможно: 1-10, I-X");
             return error;
         }
 
